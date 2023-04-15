@@ -1,54 +1,85 @@
+from custoUniforme import CustoUniforme
 from heuristicaSimples import HeuristicaSimples
-from tabuleiro import Tabuleiro
+from heuristicaPrecisa import HeuristicaPrecisa
+import time
+
 
 class Menu:
-    def __init__(self, titulo, opcoes):
-        self.titulo = titulo
-        self.opcoes = opcoes
+    def __init__(self):
+        self.title = 'Busca heurística'
+        self.options = {
+            1: 'Custo Uniforme',
+            2: 'Heurística simples',
+            3: 'Heurística mais precisa',
+            4: "Todas heuristicas",
+            5: "Sair"
+        }
 
-    def pergunte(self):
-        self.mostre()
-        return self.leia_opcao()
+    def ask(self):
+        self.show()
+        return self.read_option()
 
-    def mostre(self):
-        msg_titulo = '==== {}'.format(self.titulo)
-        print(msg_titulo)
-        for (k,v) in self.opcoes.items():
-            print('[{}] {}'.format(k,v))
+    def show(self):
+        msg_title = '==== {}'.format(self.title)
+        print(msg_title)
+        for (k, v) in self.options.items():
+            print('[{}] {}'.format(k, v))
         print('====')
 
-    def leia_opcao(self):
-        op = self.leia_inteiro('Digite sua opção : ')
-        while op not in self.opcoes:
+    def read_option(self):
+        op = self.read_int()
+        while op not in self.options:
             print('Opção inválida!')
-            op = self.leia_inteiro('Digite sua opção : ')
+            op = self.read_int()
         return op
 
-    def leia_inteiro(self, msg):
-        leu = False
-        while not leu:
+    def read_int(self):
+        read = False
+        while not read:
             try:
-                numero = int(input(msg))
-                leu = True
+                number = int(input('Digite sua opção : '))
+                read = True
             except ValueError:
-                print('Erro! Digite um número inteiro maior ou igual a zero.')
-        return numero
+                print('Erro! Digite um número int maior ou igual a zero.')
+        return number
 
-    def iniciar():
-        opcoes = {
-            1:'Custo Uniforme',
-            2:'Heurística simples',
-            3:'Heurística mais precisa'
-        }
-    
-        menu = Menu('Busca heurística', opcoes)
-        op =  menu.pergunte()
-        inicio = Tabuleiro(input('Insira o tabuleiro inicial:'))
+    def initial_state(self):
+        initial_state = (input('Insira o tabuleiro inicial:')).split()
+        initial_state = [int(x) for x in initial_state]
+        initial_state = [(initial_state[i:i + 3])
+                         for i in range(0, len(initial_state), 3)]
+        return initial_state
 
-        heuristicas = {
-            1:'Custo Uniforme',
-            2: HeuristicaSimples(inicio).calcularHeuristica(),
-            3:'Heurística mais precisa'
-        }
-        
-        heuristicas[op]
+    def show_results(self, option, result, tempo_total):
+        print("\n---- " + option)
+        print(f'Total caminho: {result["final_cost"]}')
+        print(f'Total nodos visitados {result["len_explored"]}')
+        print(f"{(tempo_total):.4f} segundos\n")
+
+    def start(self):
+        while (True):
+            op = self.ask()
+
+            if (op == 5):
+                exit()
+
+            initial_state = self.initial_state()
+            heuristics = {
+                1: CustoUniforme(initial_state),
+                2: HeuristicaSimples(initial_state),
+                3: HeuristicaPrecisa(initial_state)
+            }
+
+            if (op == 4):
+                for op, h in heuristics.items():
+                    init_time = time.time()  # em segundos
+                    result = h.solve_puzzle()
+                    final_time = time.time()  # em segundos
+                    self.show_results(self.options[op],
+                                      result, final_time - init_time)
+            else:
+                init_time = time.time()  # em segundos
+                result = heuristics[op].solve_puzzle()
+                final_time = time.time()  # em segundos
+                self.show_results(self.options[op],
+                                  result, final_time - init_time)

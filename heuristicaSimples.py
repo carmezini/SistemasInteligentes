@@ -1,41 +1,22 @@
-class HeuristicaSimples:
-    def __init__(self, inicio) -> None:
-        self.objetivo = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
-        self.nodosAbertos = [inicio]
-        self.nodosVisitados = []
+from heuristica_abstract import HeuristicaAbstract
 
-    def calcularHeuristica(self):
-        for nodo in self.nodosAbertos:
-            tabuleiro = nodo.getTabuleiro()
-            score = 0
-            
-            for linha in range (3):
-                for col in range (3):
-                    if(self.foraDoLugar(tabuleiro[linha][col], linha, col)):
-                        score += 1
-                        nodo.score = score
-        if score == 0:
-            self.jogoTerminou()
 
-    def criarNodos(self):
-       menor = self.nodosAbertos[0]
-       for nodo in self.nodosAbertos:
-            if nodo.score <= menor.score:
-                menor = nodo
+class HeuristicaSimples(HeuristicaAbstract):
+    def __init__(self, initial_state):
+        super().__init__(initial_state)
 
-    def foraDoLugar(self, peca, x, y):
-        if peca != '0':
-            posicao = True
-            for linha in range (len(self.objetivo)):
-                try:
-                    if self.objetivo[linha].index(int(peca)) == y and linha == x:
-                        posicao = False
-                        break
-                except ValueError:
-                    pass
-            return posicao
-        else:
-            return False
+    def get_heuristic(self, state):
+        """
+        Calcula a quantidade de peças fora de sua posição final.
+        Retorna um inteiro indicando o valor da heurística.
+        """
+        # estado objetivo (peças na posição final)
+        goal_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
+        # contador de peças fora de posição
+        misplaced = 0
 
-    def jogoTerminou(self, nodo):
-        estadoAtual = nodo
+        for i in range(3):
+            for j in range(3):
+                if state[i][j] != 0 and state[i][j] != goal_state[i][j]:
+                    misplaced += 1
+        return misplaced

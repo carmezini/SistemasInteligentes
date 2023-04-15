@@ -1,3 +1,3 @@
 from menu import Menu
 
-Menu.iniciar()
+Menu().start()

@@ -53,7 +53,8 @@ class Menu:
     def show_results(self, option, result, tempo_total):
         print("\n---- " + option)
         print(f'Total caminho: {result["final_cost"]}')
-        print(f'Total nodos visitados {result["len_explored"]}')
+        print(f'Total nodos visitados: {result["len_explored"]}')
+        print(f'Movimentos: {result["moves"]}')
         print(f"{(tempo_total):.4f} segundos\n")
 
     def start(self):

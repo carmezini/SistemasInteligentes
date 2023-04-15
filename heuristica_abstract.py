@@ -20,17 +20,17 @@ class HeuristicaAbstract(ABC):
         moves = []
         # movimentos válidos
         if i > 0:
-            # esquerda
-            moves.append((-1, 0))
-        if i < 2:
-            # direita
-            moves.append((1, 0))
-        if j > 0:
-            # baixo
-            moves.append((0, -1))
-        if j < 2:
             # cima
-            moves.append((0, 1))
+            moves.append(("CIMA", (-1, 0)))
+        if i < 2:
+            # baixo
+            moves.append(("BAIXO", (1, 0)))
+        if j > 0:
+            # esquerda
+            moves.append(("ESQUERDA", (0, -1)))
+        if j < 2:
+            # dierita
+            moves.append(("DIREITA", (0, 1)))
         return moves
 
     def apply_move(self, state, move):
@@ -58,12 +58,18 @@ class HeuristicaAbstract(ABC):
                     'len_explored': len(explored),
                     'final_cost': node.cost
                 }
+                moves = []
+                while node.move:
+                    moves.append(node.move[0])
+                    node = node.parent
+                result["moves"] = moves[::-1]
+
                 return result
             # tabuleiro incompleto
             # add nodo aos nodos visitados
             explored.append(node.state)
             for move in self.get_moves(node.state):
-                child_state = self.apply_move(node.state, move)
+                child_state = self.apply_move(node.state, move[1])
                 if child_state not in explored:
                     child_cost = node.cost + 1
                     child_heuristic = self.get_heuristic(child_state)

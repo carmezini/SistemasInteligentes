@@ -1,4 +1,4 @@
-## 🔍  Sitemas Inteligentes: Algoritimos Busca
+## 🔍  Sistemas Inteligentes: Algoritimos Busca
 
 <p>
 Projeto para a disciplina de Sistemas Inteligentes implementando um algoritmo de busca A*.
